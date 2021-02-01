@@ -122,6 +122,8 @@ func skipValue(buf []byte, cursor int64) (int64, error) {
 			}
 			continue
 		case 'n':
+			// I can't use consume() here because the error values are
+			// not errInvalidCharacter(), but errUnexpectedEndOfJSON
 			if cursor+3 >= buflen {
 				return 0, errUnexpectedEndOfJSON("null", cursor)
 			}

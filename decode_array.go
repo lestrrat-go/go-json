@@ -83,21 +83,7 @@ func (d *arrayDecoder) decode(buf []byte, cursor int64, p unsafe.Pointer) (int64
 		case ' ', '\n', '\t', '\r':
 			continue
 		case 'n':
-			buflen := int64(len(buf))
-			if cursor+3 >= buflen {
-				return 0, errUnexpectedEndOfJSON("null", cursor)
-			}
-			if buf[cursor+1] != 'u' {
-				return 0, errInvalidCharacter(buf[cursor+1], "null", cursor)
-			}
-			if buf[cursor+2] != 'l' {
-				return 0, errInvalidCharacter(buf[cursor+2], "null", cursor)
-			}
-			if buf[cursor+3] != 'l' {
-				return 0, errInvalidCharacter(buf[cursor+3], "null", cursor)
-			}
-			cursor += 4
-			return cursor, nil
+			return consume(buf, nullPattern, cursor)
 		case '[':
 			idx := 0
 			for {

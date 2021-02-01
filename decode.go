@@ -264,3 +264,21 @@ func (d *Decoder) InputOffset() int64 {
 func (d *Decoder) UseNumber() {
 	d.s.useNumber = true
 }
+
+var nullPattern = []byte("null")
+
+func consume(buf, expected []byte, cursor int64) (int64, error) {
+	buflen := int64(len(buf))
+	expectedlen := int64(len(expected))
+
+	if buflen < cursor+expectedlen {
+		return 0, errUnexpectedEndOfJSON(string(expected), cursor)
+	}
+
+	for i := cursor; i < cursor+expectedlen; i++ {
+		if buf[i] != expected[i-cursor] {
+			return 0, errInvalidCharacter(buf[i], string(expected), cursor)
+		}
+	}
+	return cursor + expectedlen, nil
+}
